@@ -130,7 +130,7 @@ static void idle(void)
     }
 
     /* Handle fade transition */
-    if (G.transitioning) {
+    if (G.transitioning==1) {
         G.transAlpha += TRANS_SPEED * delta_time;
         if (G.transAlpha >= 1.f) {
             /* Fully black – switch stage now */
