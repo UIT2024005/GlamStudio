@@ -17,6 +17,7 @@ void makeup_draw_nose(void);          /* simple nose            */
 void makeup_draw_eyebrows(void);      /* eyebrows               */
 void makeup_draw_hair(void);          /* simple hair backdrop   */
 void makeup_draw_neck_shoulders(void);
+void makeup_draw_ears(void);         /* ears drawn separately  */
 void makeup_init(void);
 /* ── Stage display ──────────────────────────────────────── */
 void makeup_draw(void);               /* entire stage 1 scene   */

@@ -186,10 +186,10 @@ void ui_draw_title(float cx, float y, const char *str,
     float tw = (float)len * 10.f;
     float x = cx - tw / 2.f;
 
-    ui_draw_text(x+2, y-2, str, 0.2f,0.05f,0.15f,
-                 GLUT_BITMAP_HELVETICA_18);
+//   ui_draw_text(x+4, y-4, str, 0.2f,0.05f,0.15f,
+//              GLUT_BITMAP_HELVETICA_18);
 
-    ui_draw_text(x, y, str, r, g, b,
+    ui_draw_text(x+4, y-4, str, r, g, b,
                  GLUT_BITMAP_HELVETICA_18);
 }
 

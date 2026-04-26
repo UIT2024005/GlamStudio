@@ -20,11 +20,11 @@ extern void stage_next(void);
 
 /* ── UI panel ────────────────────────────────────────────── */
 #define PANEL_X2  550.f
-#define PANEL_W2  330.f
+#define PANEL_W2  380.f
 
 /* Swatch size */
-#define SW2  38.f
-#define GAP2 12.f
+#define SW2  42.f
+#define GAP2 40.f
 
 /* ── Buttons ─────────────────────────────────────────────── */
 static Button btn_finish;
@@ -60,7 +60,7 @@ void dressup_init(void)
     float sx, sy;
 
     /* Dress buttons */
-    sy = 460.f;
+  sy = 470.f;  // Dresses (higher)
     for (int i = 0; i < 3; i++) {
         btn_dress[i].x = PANEL_X2 + 18 + i*(SW2+GAP2);
         btn_dress[i].y = sy;
@@ -148,54 +148,125 @@ static void draw_dressup_bg(void)
 }
 
 /* ── CHARACTER BODY ──────────────────────────────────────── */
-
 void dressup_draw_hair(void)
 {
-    float bcy = BCY + (float)sin(G.breathPhase) * 2.5f;
+    float bcy = BCY + sin(G.breathPhase) * 2.5f;
 
-    switch (G.hair) {
-        case HAIR_LONG:
-            /* Long wavy – wide side panels */
-            draw_ellipse(BCX, bcy+235, 62, 100, COL_HAIR_DARK, 1.f, 1);
-            /* waves left */
-            draw_ellipse(BCX-58, bcy+130, 18, 90, COL_HAIR_DARK, 1.f, 1);
-            draw_ellipse(BCX-62, bcy+60,  16, 60, COL_HAIR_DARK, 0.8f, 1);
-            /* waves right */
-            draw_ellipse(BCX+58, bcy+130, 18, 90, COL_HAIR_DARK, 1.f, 1);
-            draw_ellipse(BCX+62, bcy+60,  16, 60, COL_HAIR_DARK, 0.8f, 1);
-            break;
+    switch (G.hair)
+    {
+    /* ================= LONG WAVY (SOFT + FLOWY) ================= */
+    case HAIR_LONG:
+    {
+        /* BACK VOLUME (soft, not hard oval) */
+        draw_ellipse(BCX, bcy+240, 65, 85, COL_HAIR_DARK, 0.9f, 1);
 
-        case HAIR_BUN:
-            /* Bun on top */
-            draw_ellipse(BCX, bcy+262, 55, 55, COL_HAIR_MED, 1.f, 1);
-            /* bun knot */
-            draw_circle(BCX, bcy+298, 22, COL_HAIR_MED, 1.f, 1);
-            draw_circle(BCX, bcy+300, 18,
-                        0.40f,0.24f,0.12f, 1.f, 1);
-            /* side wisps */
-            draw_ellipse(BCX-50, bcy+225, 14, 40, COL_HAIR_MED, 1.f, 1);
-            draw_ellipse(BCX+50, bcy+225, 14, 40, COL_HAIR_MED, 1.f, 1);
-            break;
+        /* LEFT FLOW STRANDS */
+        for (int i = 0; i < 5; i++) {
+            float xoff = -35 - i*6;
+            float yoff = bcy + 210 - i*35;
 
-        case HAIR_CURLY:
-            /* Voluminous curly mass */
-            draw_ellipse(BCX, bcy+250, 80, 85, COL_HAIR_LIGHT, 1.f, 1);
-            /* curl clusters */
-            for (int i = 0; i < 8; i++) {
-                float ang = i * (float)(M_PI/4.0);
-                float cx2 = BCX + cosf(ang)*68.f;
-                float cy2 = bcy+240 + sinf(ang)*52.f;
-                draw_circle(cx2, cy2, 22,
-                            COL_HAIR_LIGHT, 1.f, 1);
-            }
-            /* highlight */
-            draw_ellipse(BCX-20, bcy+280, 30, 20, COL_HAIR_LIGHT,0.4f, 1);
-            break;
+            draw_ellipse(BCX + xoff, yoff,
+                         16 - i*1.5f, 40,
+                         COL_HAIR_DARK, 0.9f - i*0.1f, 1);
+        }
 
-        default:
-            /* No hair – plain dark */
-            draw_ellipse(BCX, bcy+240, 62, 80, COL_HAIR_DARK, 1.f, 1);
-            break;
+        /* RIGHT FLOW STRANDS */
+        for (int i = 0; i < 5; i++) {
+            float xoff = 35 + i*6;
+            float yoff = bcy + 210 - i*35;
+
+            draw_ellipse(BCX + xoff, yoff,
+                         16 - i*1.5f, 40,
+                         COL_HAIR_DARK, 0.9f - i*0.1f, 1);
+        }
+
+        /* FRONT SOFT STRANDS */
+        draw_ellipse(BCX-30, bcy+215, 14, 45, COL_HAIR_DARK, 1.f, 1);
+        draw_ellipse(BCX+30, bcy+215, 14, 45, COL_HAIR_DARK, 1.f, 1);
+
+        /* FACE FRAMING STRANDS (important for realism) */
+        draw_ellipse(BCX-20, bcy+180, 10, 35, COL_HAIR_DARK, 0.9f, 1);
+        draw_ellipse(BCX+20, bcy+180, 10, 35, COL_HAIR_DARK, 0.9f, 1);
+
+        /* TOP SHINE */
+        draw_ellipse(BCX-15, bcy+275, 30, 18, 1,1,1, 0.12f, 1);
+
+        break;
+    }
+
+    /* ================= BUN (CLEAN + ELEGANT) ================= */
+case HAIR_BUN:
+{
+    /* ===== BASE (narrower, lifted) ===== */
+    draw_ellipse(BCX, bcy+235, 46, 58, COL_HAIR_MED, 1.f, 1);
+
+    /* ===== SMALLER, LESS ROUND BUN ===== */
+    draw_ellipse(BCX+2, bcy+300, 20, 26, COL_HAIR_MED, 1.f, 1);
+
+    /* ===== WRAPPED HAIR EFFECT (breaks perfect shape) ===== */
+    draw_ellipse(BCX-6, bcy+305, 10, 16, COL_HAIR_MED, 0.8f, 1);
+    draw_ellipse(BCX+8, bcy+292, 8, 14, COL_HAIR_MED, 0.75f, 1);
+
+    /* ===== SLIGHT ASYMMETRY (natural look) ===== */
+    draw_ellipse(BCX-3, bcy+298, 6, 10, COL_HAIR_MED, 0.7f, 1);
+
+    /* ===== FACE-FRAMING STRANDS (slimming) ===== */
+    draw_ellipse(BCX-22, bcy+185, 7, 52, COL_HAIR_MED, 0.9f, 1);
+    draw_ellipse(BCX+20, bcy+185, 7, 52, COL_HAIR_MED, 0.9f, 1);
+
+    /* inward curve (prettier jaw framing) */
+    draw_ellipse(BCX-16, bcy+155, 5, 36, COL_HAIR_MED, 0.7f, 1);
+    draw_ellipse(BCX+14, bcy+155, 5, 36, COL_HAIR_MED, 0.7f, 1);
+
+    /* ===== BABY HAIRS (tiny but powerful detail) ===== */
+    draw_ellipse(BCX-10, bcy+205, 4, 16, COL_HAIR_MED, 0.6f, 1);
+    draw_ellipse(BCX+10, bcy+205, 4, 16, COL_HAIR_MED, 0.6f, 1);
+
+    /* ===== SUBTLE TOP HIGHLIGHT ===== */
+    draw_ellipse(BCX, bcy+308, 10, 6, 1,1,1, 0.08f, 1);
+
+    break;
+}
+
+    /* ================= CURLY (BOUNCY + NATURAL) ================= */
+    case HAIR_CURLY:
+    {
+        /* BASE SHAPE */
+        draw_ellipse(BCX, bcy+240, 75, 80, COL_HAIR_LIGHT, 0.9f, 1);
+
+        /* RANDOMIZED CURLS (less perfect circle = more real) */
+        for (int i = 0; i < 16; i++) {
+            float ang = i * (2*M_PI/16);
+
+            float radius = 55 + sinf(i)*6;  // variation
+            float cx = BCX + cosf(ang) * radius;
+            float cy = bcy + 230 + sinf(ang) * (45 + cosf(i)*5);
+
+            draw_circle(cx, cy, 14 + (i%3), COL_HAIR_LIGHT, 0.95f, 1);
+        }
+
+        /* INNER DEPTH CURLS */
+        for (int i = 0; i < 8; i++) {
+            float ang = i * (2*M_PI/8);
+            float cx = BCX + cosf(ang) * 30.f;
+            float cy = bcy + 235 + sinf(ang) * 25.f;
+
+            draw_circle(cx, cy, 10, COL_HAIR_LIGHT, 0.85f, 1);
+        }
+
+        /* FACE FRAMING CURLS */
+        draw_circle(BCX-28, bcy+190, 12, COL_HAIR_LIGHT, 1.f, 1);
+        draw_circle(BCX+28, bcy+190, 12, COL_HAIR_LIGHT, 1.f, 1);
+
+        /* SOFT HIGHLIGHT */
+        draw_ellipse(BCX-10, bcy+270, 25, 15, 1,1,1, 0.10f, 1);
+
+        break;
+    }
+
+    default:
+        draw_ellipse(BCX, bcy+240, 60, 80, COL_HAIR_DARK, 1.f, 1);
+        break;
     }
 }
 
@@ -205,16 +276,69 @@ void dressup_draw_face(void)
     float bcy = BCY + (float)sin(G.breathPhase) * 2.5f;
     float fcx = BCX, fcy = bcy + 220.f;
 
-    /* Face oval */
-    draw_ellipse(fcx, fcy, 46, 58, COL_SKIN, 1.f, 1);
+    /* ================= FACE BASE (SLIMMER) ================= */
+    draw_ellipse(fcx, fcy+4, 44, 54, COL_SKIN, 1.f, 1);
 
-    /* Eye shadow */
-    if (G.eye != EYE_NONE)
-        draw_ellipse(fcx-20, fcy+20, 14, 7, G.eyeR,G.eyeG,G.eyeB, 0.7f, 1);
-    if (G.eye != EYE_NONE)
-        draw_ellipse(fcx+20, fcy+20, 14, 7, G.eyeR,G.eyeG,G.eyeB, 0.7f, 1);
+    /* ================= JAW OVERLAY (SHARPER) ================= */
+    glColor3f(COL_SKIN);
+    glBegin(GL_POLYGON);
 
-    /* Eyes */
+        /* Chin (slightly higher + sharp) */
+        glVertex2f(fcx,      fcy - 48);
+
+        /* Right jaw (tight inward) */
+        glVertex2f(fcx + 16, fcy - 30);
+        glVertex2f(fcx + 24, fcy - 6);
+
+        /* Blend to cheek */
+        glVertex2f(fcx + 22, fcy + 18);
+
+        /* Top */
+        glVertex2f(fcx,      fcy + 48);
+
+        /* Left mirror */
+        glVertex2f(fcx - 22, fcy + 18);
+        glVertex2f(fcx - 24, fcy - 6);
+        glVertex2f(fcx - 16, fcy - 30);
+
+    glEnd();
+
+    /* ================= JAW SHADOW (TIGHTER) ================= */
+/* ================= STABLE V CHIN LINE ================= */
+float static_fcy = BCY + 220.f;   // remove breathing from chin
+
+glDisable(GL_BLEND);              // avoid alpha flicker
+glColor3f(0.75f, 0.62f, 0.58f);  // soft warm skin shadow
+
+glLineWidth(1.4f);
+
+glBegin(GL_LINES);
+    /* left line */
+    glVertex2f(fcx - 12, static_fcy - 32);
+    glVertex2f(fcx,      static_fcy - 46);
+
+    /* right line */
+    glVertex2f(fcx,      static_fcy - 46);
+    glVertex2f(fcx + 12, static_fcy - 32);
+glEnd();
+
+glLineWidth(1.f);
+glEnable(GL_BLEND);   // re-enable if used elsewhere
+
+    /* ================= EARS ================= */
+    draw_ellipse(fcx-44, fcy+10, 7, 12, COL_SKIN, 1.f, 1);
+    draw_ellipse(fcx+44, fcy+10, 7, 12, COL_SKIN, 1.f, 1);
+
+    draw_ellipse(fcx-44, fcy+8, 4, 6, COL_SKIN_DARK, 0.25f, 1);
+    draw_ellipse(fcx+44, fcy+8, 4, 6, COL_SKIN_DARK, 0.25f, 1);
+
+    /* ================= EYE SHADOW ================= */
+    if (G.eye != EYE_NONE) {
+        draw_ellipse(fcx-20, fcy+20, 14, 7, G.eyeR,G.eyeG,G.eyeB, 0.45f, 1);
+        draw_ellipse(fcx+20, fcy+20, 14, 7, G.eyeR,G.eyeG,G.eyeB, 0.45f, 1);
+    }
+
+    /* ================= EYES ================= */
     draw_ellipse(fcx-20, fcy+18, 11, 7, 0.97f,0.97f,0.97f, 1.f, 1);
     draw_circle (fcx-20, fcy+18, 5,  0.15f,0.08f,0.04f, 1.f, 1);
     draw_circle (fcx-20, fcy+18, 2.5f, 0.02f,0.01f,0.01f, 1.f, 1);
@@ -225,34 +349,56 @@ void dressup_draw_face(void)
     draw_circle (fcx+20, fcy+18, 2.5f, 0.02f,0.01f,0.01f, 1.f, 1);
     draw_circle (fcx+23, fcy+21, 1.5f, 1,1,1, 0.9f, 1);
 
-    /* Eyebrows */
-    glColor3f(COL_HAIR_DARK);
-    glLineWidth(3.f);
+    /* Eyelids */
+    glColor3f(0.2f,0.1f,0.1f);
+    glLineWidth(2.f);
+
     glBegin(GL_LINE_STRIP);
-      glVertex2f(fcx-34, fcy+34);
-      glVertex2f(fcx-20, fcy+41);
-      glVertex2f(fcx-6,  fcy+36);
+        glVertex2f(fcx-30, fcy+20);
+        glVertex2f(fcx-20, fcy+23);
+        glVertex2f(fcx-10, fcy+20);
     glEnd();
+
     glBegin(GL_LINE_STRIP);
-      glVertex2f(fcx+34, fcy+34);
-      glVertex2f(fcx+20, fcy+41);
-      glVertex2f(fcx+6,  fcy+36);
+        glVertex2f(fcx+10, fcy+20);
+        glVertex2f(fcx+20, fcy+23);
+        glVertex2f(fcx+30, fcy+20);
     glEnd();
+
     glLineWidth(1.f);
 
-    /* Nose */
-    draw_ellipse(fcx, fcy+4, 6, 8, COL_SKIN_DARK, 0.25f, 1);
+    /* ================= EYEBROWS ================= */
+    glColor3f(COL_HAIR_DARK);
+    glLineWidth(3.f);
 
-    /* Blush */
+    glBegin(GL_LINE_STRIP);
+        glVertex2f(fcx-34, fcy+34);
+        glVertex2f(fcx-20, fcy+41);
+        glVertex2f(fcx-6,  fcy+36);
+    glEnd();
+
+    glBegin(GL_LINE_STRIP);
+        glVertex2f(fcx+34, fcy+34);
+        glVertex2f(fcx+20, fcy+41);
+        glVertex2f(fcx+6,  fcy+36);
+    glEnd();
+
+    glLineWidth(1.f);
+
+    /* ================= NOSE ================= */
+    draw_ellipse(fcx, fcy+4, 6, 8, COL_SKIN_DARK, 0.20f, 1);
+
+    /* ================= BLUSH (SOFTER) ================= */
     if (G.blush) {
-        draw_ellipse(fcx-34, fcy+8, 12, 7, COL_BLUSH, 0.4f, 1);
-        draw_ellipse(fcx+34, fcy+8, 12, 7, COL_BLUSH, 0.4f, 1);
+        draw_ellipse(fcx-30, fcy+8, 10, 5, COL_BLUSH, 0.22f, 1);
+        draw_ellipse(fcx+30, fcy+8, 10, 5, COL_BLUSH, 0.22f, 1);
     }
 
-    /* Lips */
-    draw_ellipse(fcx, fcy-14, 14, 6, G.lipR,G.lipG,G.lipB, 1.f, 1);
-    draw_ellipse(fcx-6, fcy-8, 8, 5, G.lipR,G.lipG,G.lipB, 1.f, 1);
-    draw_ellipse(fcx+6, fcy-8, 8, 5, G.lipR,G.lipG,G.lipB, 1.f, 1);
+    /* ================= LIPS (MORE GAP FROM NOSE) ================= */
+    draw_ellipse(fcx, fcy-20, 14, 6, G.lipR,G.lipG,G.lipB, 1.f, 1);
+    draw_ellipse(fcx-6, fcy-14, 8, 5, G.lipR,G.lipG,G.lipB, 1.f, 1);
+    draw_ellipse(fcx+6, fcy-14, 8, 5, G.lipR,G.lipG,G.lipB, 1.f, 1);
+
 }
 
 void dressup_draw_body(void)
@@ -268,26 +414,46 @@ void dressup_draw_body(void)
       glVertex2f(BCX+18, BCY+140+bob);
       glVertex2f(BCX-18, BCY+140+bob);
     glEnd();
+/* Upper torso (visible part) */
+draw_ellipse(BCX, BCY+110, 38, 60, COL_SKIN, 1.f, 1);
 
-    /* Torso */
-    draw_ellipse(BCX, BCY+90, 55, 80, COL_SKIN, 1.f, 1);
-    /* Waist indent */
-    draw_ellipse(BCX, BCY+70, 38, 20, COL_SKIN, 1.f, 1);
+/* REMOVE or shrink waist completely */
+draw_ellipse(BCX, BCY+75, 18, 10, COL_SKIN, 1.f, 1);
 
     /* Arms */
-    /* Left arm */
-    draw_ellipse(BCX-65, BCY+90+bob, 16, 60, COL_SKIN, 1.f, 1);
-    draw_ellipse(BCX-68, BCY+30+bob, 14, 24, COL_SKIN, 1.f, 1);
-    /* Right arm */
-    draw_ellipse(BCX+65, BCY+90+bob, 16, 60, COL_SKIN, 1.f, 1);
-    draw_ellipse(BCX+68, BCY+30+bob, 14, 24, COL_SKIN, 1.f, 1);
+/* ===== SHOULDERS (balanced width) ===== */
+draw_ellipse(BCX-36, BCY+120+bob, 20, 14, COL_SKIN, 1.f, 1);
+draw_ellipse(BCX+36, BCY+120+bob, 20, 14, COL_SKIN, 1.f, 1);
 
-    /* Legs – visible below dress hem (drawn first, dress overlays) */
-    draw_ellipse(BCX-20, BCY-95, 18, 90, COL_SKIN, 1.f, 1);
-    draw_ellipse(BCX+20, BCY-95, 18, 90, COL_SKIN, 1.f, 1);
-    /* Feet */
-    draw_ellipse(BCX-20, BCY-180, 20, 10, COL_SKIN_DARK, 1.f, 1);
-    draw_ellipse(BCX+20, BCY-180, 20, 10, COL_SKIN_DARK, 1.f, 1);
+
+/* ===== UPPER ARMS (moved outward slightly) ===== */
+draw_ellipse(BCX-48, BCY+90+bob, 14, 55, COL_SKIN, 1.f, 1);
+draw_ellipse(BCX+48, BCY+90+bob, 14, 55, COL_SKIN, 1.f, 1);
+
+
+/* ===== ELBOW JOINT ===== */
+draw_circle(BCX-46, BCY+55+bob, 6.5f, COL_SKIN, 1.f, 1);
+draw_circle(BCX+46, BCY+55+bob, 6.5f, COL_SKIN, 1.f, 1);
+
+
+/* ===== LOWER ARMS ===== */
+draw_ellipse(BCX-44, BCY+25+bob, 12, 28, COL_SKIN, 1.f, 1);
+draw_ellipse(BCX+44, BCY+25+bob, 12, 28, COL_SKIN, 1.f, 1);
+
+  /* ===== HIP TRANSITION (VERY IMPORTANT FIX) ===== */
+draw_ellipse(BCX, BCY+20, 30, 35, COL_SKIN, 1.f, 1);
+
+/* ===== UPPER THIGHS (closer, slightly inward) ===== */
+draw_ellipse(BCX-14, BCY-40, 16, 70, COL_SKIN, 1.f, 1);
+draw_ellipse(BCX+14, BCY-40, 16, 70, COL_SKIN, 1.f, 1);
+
+/* ===== LOWER LEGS ===== */
+draw_ellipse(BCX-16, BCY-110, 14, 75, COL_SKIN, 1.f, 1);
+draw_ellipse(BCX+16, BCY-110, 14, 75, COL_SKIN, 1.f, 1);
+
+/* ===== FEET ===== */
+draw_ellipse(BCX-16, BCY-175, 18, 10, COL_SKIN_DARK, 1.f, 1);
+draw_ellipse(BCX+16, BCY-175, 18, 10, COL_SKIN_DARK, 1.f, 1);
 }
 
 /* Draw chosen dress */
@@ -301,128 +467,123 @@ void dressup_draw_dress(void)
         case DRESS_GOWN:    dr=COL_DRESS_GOWN;    break;
         case DRESS_CASUAL:  dr=COL_DRESS_CASUAL;  break;
         case DRESS_GLAMOUR: dr=COL_DRESS_GLAMOUR; break;
-        default: return;
+        default: break;
     }
 
     glColor4f(dr, dg, db, fade);
 
-    switch (G.dress) {
-        /* ── Ball Gown ── */
-        case DRESS_GOWN: {
-            /* Bodice */
-            glBegin(GL_QUADS);
-              glVertex2f(BCX-40, BCY+60+bob);
-              glVertex2f(BCX+40, BCY+60+bob);
-              glVertex2f(BCX+50, BCY+130+bob);
-              glVertex2f(BCX-50, BCY+130+bob);
-            glEnd();
-            /* Skirt – wide bell shape */
-            glBegin(GL_TRIANGLE_FAN);
-              glVertex2f(BCX, BCY+55+bob);
-              glVertex2f(BCX-130, BCY-160);
-              glVertex2f(BCX-90,  BCY-170);
-              glVertex2f(BCX-50,  BCY-175);
-              glVertex2f(BCX,     BCY-180);
-              glVertex2f(BCX+50,  BCY-175);
-              glVertex2f(BCX+90,  BCY-170);
-              glVertex2f(BCX+130, BCY-160);
-            glEnd();
-            /* Tulle layers */
-            glColor4f(dr+0.15f, dg+0.10f, db+0.15f, fade*0.5f);
-            glBegin(GL_TRIANGLE_FAN);
-              glVertex2f(BCX, BCY+30+bob);
-              glVertex2f(BCX-140, BCY-165);
-              glVertex2f(BCX-100, BCY-175);
-              glVertex2f(BCX,     BCY-185);
-              glVertex2f(BCX+100, BCY-175);
-              glVertex2f(BCX+140, BCY-165);
-            glEnd();
-            /* Waistband */
-            glColor4f(dr-0.1f, dg, db-0.05f, fade);
-            draw_ellipse(BCX, BCY+60+bob, 42, 10, dr-0.1f,dg,db-0.05f, fade, 1);
-            break;
-        }
+    switch (G.dress)
+    {
+    /* ================= BALL GOWN ================= */
+    case DRESS_GOWN:
+    {
+        /* LOWERED bodice → creates neck space */
+        draw_ellipse(BCX, BCY+115+bob, 50, 60, dr,dg,db, fade, 1);
 
-        /* ── Casual Sundress ── */
-        case DRESS_CASUAL: {
-            /* Bodice */
-            glColor4f(dr, dg, db, fade);
-            glBegin(GL_QUADS);
-              glVertex2f(BCX-36, BCY+65+bob);
-              glVertex2f(BCX+36, BCY+65+bob);
-              glVertex2f(BCX+44, BCY+135+bob);
-              glVertex2f(BCX-44, BCY+135+bob);
-            glEnd();
-            /* A-line skirt */
-            glBegin(GL_TRIANGLE_FAN);
-              glVertex2f(BCX, BCY+60+bob);
-              glVertex2f(BCX-72, BCY-80);
-              glVertex2f(BCX-50, BCY-120);
-              glVertex2f(BCX,    BCY-130);
-              glVertex2f(BCX+50, BCY-120);
-              glVertex2f(BCX+72, BCY-80);
-            glEnd();
-            /* Floral pattern dots */
-            glColor4f(1.f, 0.85f, 0.90f, fade*0.7f);
-            for (int i = 0; i < 10; i++) {
-                float fx = BCX - 55.f + i*13.f;
-                float fy = BCY - 20.f + (float)sin(i*1.2f)*30.f;
-                draw_circle(fx, fy, 5, 1,0.8f,0.88f, fade*0.7f, 1);
-            }
-            /* Straps */
-            glColor4f(dr-0.05f, dg+0.05f, db+0.10f, fade);
-            glLineWidth(5.f);
-            glBegin(GL_LINES);
-              glVertex2f(BCX-22, BCY+135+bob);
-              glVertex2f(BCX-30, BCY+165+bob);
-              glVertex2f(BCX+22, BCY+135+bob);
-              glVertex2f(BCX+30, BCY+165+bob);
-            glEnd();
-            glLineWidth(1.f);
-            break;
-        }
+        /* neckline dip */
+        draw_ellipse(BCX, BCY+155+bob, 28, 18, COL_SKIN, 1.f, 1);
 
-        /* ── Glamour Sequin Dress ── */
-        case DRESS_GLAMOUR: {
-            /* Sheath body */
-            glColor4f(dr, dg, db, fade);
-            glBegin(GL_QUADS);
-              glVertex2f(BCX-40, BCY+65+bob);
-              glVertex2f(BCX+40, BCY+65+bob);
-              glVertex2f(BCX+32, BCY-90);
-              glVertex2f(BCX-32, BCY-90);
-            glEnd();
-            /* Sequin sparkle overlay */
-            for (int i = 0; i < 30; i++) {
-                float sx2 = BCX - 35.f + (i % 7)*11.f;
-                float sy2 = BCY + 60.f + bob - (i/7)*28.f;
-                float bright = 0.7f + sinf(G.animTime*3.f+i)*0.3f;
-                glColor4f(bright, bright*0.8f, bright*0.9f, fade*0.85f);
-                draw_circle(sx2, sy2, 3.5f, bright,bright*0.8f,bright*0.9f, fade*0.85f, 1);
-            }
-            /* Slit */
-            glColor4f(0.96f, 0.88f, 0.92f, fade * 0.6f);
-            glBegin(GL_TRIANGLES);
-              glVertex2f(BCX+10, BCY-40);
-              glVertex2f(BCX+32, BCY-40);
-              glVertex2f(BCX+32, BCY-90);
-            glEnd();
-            /* Halter neck strap */
-            glColor4f(dr, dg, db, fade);
-            glLineWidth(6.f);
-            glBegin(GL_LINES);
-              glVertex2f(BCX-10, BCY+65+bob);
-              glVertex2f(BCX,    BCY+155+bob);
-              glVertex2f(BCX+10, BCY+65+bob);
-              glVertex2f(BCX,    BCY+155+bob);
-            glEnd();
-            glLineWidth(1.f);
-            break;
-        }
-        default: break;
+        /* waist */
+        draw_ellipse(BCX, BCY+70+bob, 38, 18, dr-0.1f,dg,db-0.05f, fade, 1);
+
+        /* skirt */
+        draw_ellipse(BCX, BCY-40, 140, 120, dr,dg,db, fade, 1);
+        draw_ellipse(BCX, BCY-80, 160, 110, dr,dg,db, fade*0.8f, 1);
+
+        break;
     }
+
+    /* ================= BODYCON CASUAL ================= */
+case DRESS_CASUAL:
+{
+    /* ===== MAIN BODY (STATIC — NO bob) ===== */
+    draw_ellipse(BCX, BCY+30, 48, 140, dr,dg,db, fade, 1);
+
+    /* ===== V NECK CUT (can slightly follow breathing) ===== */
+    glColor3f(COL_SKIN);
+    glBegin(GL_TRIANGLES);
+        glVertex2f(BCX-18, BCY+150+bob);
+        glVertex2f(BCX+18, BCY+150+bob);
+        glVertex2f(BCX,    BCY+120+bob);
+    glEnd();
+
+    /* waist shaping (static) */
+    draw_ellipse(BCX, BCY+60, 36, 38, dr-0.05f,dg,db, fade, 1);
+
+    /* subtle shading */
+    draw_ellipse(BCX+10, BCY+10, 10, 110, 0,0,0, 0.08f, 1);
+
+    break;
+}   
+
+    /* ================= GLAM (NEW STYLE - NO SLIT) ================= */
+ case DRESS_GLAMOUR:
+{
+    /* upper dress base */
+    draw_ellipse(BCX, BCY+110+bob, 55, 60, dr,dg,db, fade, 1);
+
+    /* ===== SWEETHEART NECK ===== */
+    glColor3f(COL_SKIN);
+
+    /* left curve */
+    draw_ellipse(BCX-15, BCY+145+bob, 20, 15, COL_SKIN, 1.f, 1);
+
+    /* right curve */
+    draw_ellipse(BCX+15, BCY+145+bob, 20, 15, COL_SKIN, 1.f, 1);
+
+    /* center dip */
+    draw_ellipse(BCX, BCY+135+bob, 12, 10, COL_SKIN, 1.f, 1);
+
+    /* fitted waist */
+    draw_ellipse(BCX, BCY+50+bob, 45, 70, dr,dg,db, fade, 1);
+
+    /* mermaid bottom */
+    draw_ellipse(BCX, BCY-70, 70, 120, dr,dg,db, fade, 1);
+    draw_ellipse(BCX, BCY-120, 95, 90, dr,dg,db, fade*0.85f, 1);
+
+    /* sparkle */
+    for (int i = 0; i < 25; i++) {
+        float sx = BCX - 30.f + (i % 6)*12.f;
+        float sy = BCY + 60.f - (i/6)*35.f;
+        float glow = 0.7f + sinf(G.animTime*3+i)*0.3f;
+        draw_circle(sx, sy, 3, glow, glow*0.8f, glow, fade, 1);
+    }
+
+    break;
 }
 
+    default:
+{
+    float bob = (float)sin(G.breathPhase) * 3.f;
+
+    /* ===== SIMPLE TOP ===== */
+    draw_ellipse(BCX, BCY+95+bob, 42, 32,
+                 0.85f, 0.75f, 0.90f, 1.f, 1);
+
+    /* slight highlight */
+    draw_ellipse(BCX+5, BCY+88+bob, 12, 20,
+                 1,1,1, 0.08f, 1);
+
+    /* ===== SIMPLE SHORTS / PANTY STYLE ===== */
+    draw_ellipse(BCX-12, BCY+40+bob, 20, 35,
+                 0.75f, 0.60f, 0.85f, 1.f, 1);
+
+    draw_ellipse(BCX+12, BCY+40+bob, 20, 35,
+                 0.75f, 0.60f, 0.85f, 1.f, 1);
+
+    /* center seam */
+    glColor3f(0.6f, 0.45f, 0.75f);
+    glLineWidth(2.f);
+    glBegin(GL_LINES);
+        glVertex2f(BCX, BCY+55+bob);
+        glVertex2f(BCX, BCY+25+bob);
+    glEnd();
+    glLineWidth(1.f);
+
+    break;
+}
+    }
+}
 /* Draw accessories */
 void dressup_draw_accessories(void)
 {
@@ -432,44 +593,61 @@ void dressup_draw_accessories(void)
     int has_earrings = (G.accessories == ACC_EARRINGS || G.accessories == ACC_BOTH);
     int has_necklace = (G.accessories == ACC_NECKLACE || G.accessories == ACC_BOTH);
 
-    if (has_earrings) {
-        /* Gold drop earrings */
-        draw_circle(BCX-48, fcy-24, 5,  0.85f,0.70f,0.10f, 1.f, 1);
-        draw_circle(BCX-48, fcy-34, 3,  0.85f,0.70f,0.10f, 1.f, 1);
-        glColor3f(0.85f,0.70f,0.10f);
-        glLineWidth(2.f);
-        glBegin(GL_LINES);
-          glVertex2f(BCX-48, fcy-29);
-          glVertex2f(BCX-48, fcy-20);
-        glEnd();
-        /* Right */
-        draw_circle(BCX+48, fcy-24, 5,  0.85f,0.70f,0.10f, 1.f, 1);
-        draw_circle(BCX+48, fcy-34, 3,  0.85f,0.70f,0.10f, 1.f, 1);
-        glBegin(GL_LINES);
-          glVertex2f(BCX+48, fcy-29);
-          glVertex2f(BCX+48, fcy-20);
-        glEnd();
-        glLineWidth(1.f);
-    }
+if (has_earrings) {
 
-    if (has_necklace) {
-        /* Pearl necklace at neck */
-        float ny = BCY + 155.f + bob;
-        glColor3f(0.95f, 0.92f, 0.85f);
-        glLineWidth(2.f);
-        /* arc of pearls */
-        int np = 11;
-        for (int i = 0; i < np; i++) {
-            float ang = (float)M_PI * 0.15f +
-                        (float)i / (np-1) * (float)M_PI * 0.70f;
-            float px = BCX + cosf(ang)*32.f;
-            float py = ny  - sinf(ang)*12.f;
-            draw_circle(px, py, 4.5f, 0.95f,0.92f,0.85f, 1.f, 1);
-            /* gold sheen */
-            draw_circle(px+1, py+1, 1.8f, 1,0.95f,0.80f, 0.6f, 1);
-        }
-        glLineWidth(1.f);
+    float ear_x_l = BCX - 44;
+    float ear_x_r = BCX + 44;
+
+    /* ear lobe reference (must match face ear position) */
+    float ear_y = fcy -10;   // align with lower ear region
+
+    /* LEFT EARRING (starts from ear end) */
+    draw_circle(ear_x_l, ear_y, 4.5f, 0.85f,0.70f,0.10f, 1.f, 1);
+    draw_circle(ear_x_l, ear_y - 10, 3.2f, 0.85f,0.70f,0.10f, 1.f, 1);
+
+    glColor3f(0.85f,0.70f,0.10f);
+    glBegin(GL_LINES);
+        glVertex2f(ear_x_l, ear_y);
+        glVertex2f(ear_x_l, ear_y + 10);
+    glEnd();
+
+    /* RIGHT EARRING */
+    draw_circle(ear_x_r, ear_y, 4.5f, 0.85f,0.70f,0.10f, 1.f, 1);
+    draw_circle(ear_x_r, ear_y - 10, 3.2f, 0.85f,0.70f,0.10f, 1.f, 1);
+
+    glBegin(GL_LINES);
+        glVertex2f(ear_x_r, ear_y);
+        glVertex2f(ear_x_r, ear_y + 10);
+    glEnd();
+}
+
+   if (has_necklace) {
+
+    /* proper neck base */
+    float neck_y = BCY + 150.f + bob;
+
+    /* slightly curved collar line reference */
+    float radius_x = 30.f;
+    float radius_y = 10.f;
+
+    glColor3f(0.95f, 0.92f, 0.85f);
+
+    int np = 13;
+
+    for (int i = 0; i < np; i++) {
+
+        float t = (float)i / (np - 1);
+        float ang = 3.1415f * (0.15f + t * 0.7f);
+
+        float px = BCX + cosf(ang) * radius_x;
+        float py = neck_y - sinf(ang) * radius_y;
+
+        draw_circle(px, py, 4.2f, 0.95f,0.92f,0.85f, 1.f, 1);
+
+        /* shine */
+        draw_circle(px+1, py+1, 1.5f, 1,0.95f,0.8f, 0.5f, 1);
     }
+}
 }
 
 /* ── PANEL UI ─────────────────────────────────────────────── */
@@ -484,7 +662,7 @@ static void draw_panel_ui2(void)
                   0.40f, 0.10f, 0.60f);
 
     /* ── Dresses ── */
-    ui_draw_text(PANEL_X2+18, 518, "Dress Style",
+    ui_draw_text(PANEL_X2+18, 540, "Dress Style",
                  0.40f, 0.10f, 0.55f, GLUT_BITMAP_HELVETICA_18);
     ui_draw_divider(PANEL_X2+18, 513, PANEL_X2+PANEL_W2-33, 513,
                     0.55f, 0.25f, 0.75f, 0.5f);
@@ -493,12 +671,17 @@ static void draw_panel_ui2(void)
         ui_draw_swatch(btn_dress[i].x, btn_dress[i].y, SW2,
                        dress_cols[i][0], dress_cols[i][1], dress_cols[i][2],
                        btn_dress[i].hovered, active);
-        ui_draw_text(btn_dress[i].x+1, btn_dress[i].y-14,
-                     dress_labels[i], 0.35f,0.10f,0.50f, GLUT_BITMAP_8_BY_13);
+ui_draw_text(
+    btn_dress[i].x+4,
+    btn_dress[i].y - 30,
+    dress_labels[i],
+    0.35f,0.10f,0.50f,
+    GLUT_BITMAP_8_BY_13
+);
     }
 
     /* ── Hairstyle ── */
-    ui_draw_text(PANEL_X2+18, 398, "Hairstyle",
+    ui_draw_text(PANEL_X2+18, 410, "Hairstyle",
                  0.40f, 0.10f, 0.55f, GLUT_BITMAP_HELVETICA_18);
     ui_draw_divider(PANEL_X2+18, 393, PANEL_X2+PANEL_W2-33, 393,
                     0.55f, 0.25f, 0.75f, 0.5f);
@@ -507,8 +690,13 @@ static void draw_panel_ui2(void)
         ui_draw_swatch(btn_hair[i].x, btn_hair[i].y, SW2,
                        hair_cols[i][0], hair_cols[i][1], hair_cols[i][2],
                        btn_hair[i].hovered, active);
-        ui_draw_text(btn_hair[i].x+1, btn_hair[i].y-14,
-                     hair_labels[i], 0.35f,0.10f,0.50f, GLUT_BITMAP_8_BY_13);
+ui_draw_text(
+    btn_hair[i].x + 4,
+    btn_hair[i].y - 30,
+    hair_labels[i],
+    0.35f,0.10f,0.50f,
+    GLUT_BITMAP_8_BY_13
+);
     }
 
     /* ── Accessories ── */

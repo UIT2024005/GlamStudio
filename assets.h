@@ -22,19 +22,27 @@ typedef enum {
     LIP_NONE = 0,
     LIP_RED,
     LIP_PINK,
-    LIP_NUDE
+    LIP_NUDE,
+    LIP_BERRY,
+    LIP_CORAL,
+    LIP_WINE
 } LipColor;
 
 typedef enum {
     EYE_NONE = 0,
     EYE_BLUE,
     EYE_PURPLE,
-    EYE_GOLD
+    EYE_GOLD,
+    EYE_GREEN,
+    EYE_TEAL,
+    EYE_SILVER
 } EyeShadow;
 
 typedef enum {
     BLUSH_NONE = 0,
-    BLUSH_ON
+    BLUSH_ROSE,
+    BLUSH_PEACH,
+    BLUSH_PINK
 } BlushState;
 
 /* ── Dress-up choices ───────────────────────────────────── */
@@ -61,33 +69,46 @@ typedef enum {
 
 /* ── Global game state ──────────────────────────────────── */
 typedef struct {
-    Stage       stage;
+    Stage stage;
 
     /* makeup */
-    LipColor    lip;
-    EyeShadow   eye;
-    BlushState  blush;
-    float       lipR, lipG, lipB;       /* current interpolated lip colour  */
-    float       eyeR, eyeG, eyeB;       /* current interpolated eye colour  */
+    LipColor lip;
+    EyeShadow eye;
+    BlushState blush;
+    float lipR, lipG, lipB;
+    float eyeR, eyeG, eyeB;
 
     /* dress-up */
-    DressStyle  dress;
-    HairStyle   hair;
+    DressStyle dress;
+    HairStyle hair;
     Accessories accessories;
 
-    /* animation helpers */
-    float       animTime;          /* seconds elapsed in current stage     */
-    float       dressFade;         /* 0→1 fade when dress changes          */
-    float       blinkTimer;        /* eye blink cycle                      */
-    int         eyeOpen;           /* 1 = open, 0 = closed (blink)         */
-    float       breathPhase;       /* sine-wave phase for breathing effect */
-    float       hairSway;          /* showcase hair sway offset            */
+    /* animation */
+    float animTime;
+    float dressFade;
+
+    float blinkTimer;
+
+    /* NEW BLINK SYSTEM */
+    float blinkHold;
+    float blinkInterval;
+    int isBlinking;
+float poseCycle;
+    /* BREATHING */
+    float breathPhase;
+
+    /* POSE SYSTEM (NEW) */
+    float posePhase;
 
     /* transition */
-    float       transAlpha;        /* 0 = transparent, 1 = opaque fade     */
-    int         transitioning;     /* are we fading between stages?        */
-} GameState;
+    float transAlpha;
+    int transitioning;
 
+    /* old (you can keep or remove later) */
+    int poseActive;
+    float poseTimer;
+
+} GameState;
 extern GameState G;   /* defined in main.c */
 
 /* ── Colour helpers ─────────────────────────────────────── */
@@ -102,14 +123,26 @@ extern GameState G;   /* defined in main.c */
 #define COL_HAIR_MED    0.35f, 0.20f, 0.10f
 #define COL_HAIR_LIGHT  0.75f, 0.55f, 0.30f
 
+#define COL_BLUSH_ROSE   0.95f, 0.50f, 0.55f
+#define COL_BLUSH_PEACH  0.98f, 0.65f, 0.45f
+#define COL_BLUSH_PINK   0.95f, 0.60f, 0.75f
+
 #define COL_LIP_RED     0.90f, 0.10f, 0.15f
 #define COL_LIP_PINK    0.95f, 0.45f, 0.60f
 #define COL_LIP_NUDE    0.85f, 0.62f, 0.55f
 #define COL_LIP_DEFAULT 0.80f, 0.55f, 0.50f
+/* NEW */
+#define COL_LIP_BERRY   0.65f, 0.05f, 0.25f
+#define COL_LIP_CORAL   0.98f, 0.45f, 0.35f
+#define COL_LIP_WINE    0.45f, 0.05f, 0.10f
 
 #define COL_EYE_BLUE    0.35f, 0.55f, 0.90f
 #define COL_EYE_PURPLE  0.60f, 0.20f, 0.80f
 #define COL_EYE_GOLD    0.85f, 0.68f, 0.10f
+/* NEW */
+#define COL_EYE_GREEN   0.20f, 0.75f, 0.45f
+#define COL_EYE_TEAL    0.15f, 0.65f, 0.70f
+#define COL_EYE_SILVER  0.75f, 0.75f, 0.80f
 #define COL_EYE_DEFAULT 0.50f, 0.50f, 0.50f
 
 #define COL_BLUSH       0.95f, 0.60f, 0.65f

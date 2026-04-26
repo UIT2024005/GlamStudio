@@ -70,8 +70,6 @@ void stage_restart(void)
     G.dressFade   = 1.f;
     G.breathPhase = 0.f;
     G.blinkTimer  = 0.f;
-    G.eyeOpen     = 1;
-    G.hairSway    = 0.f;
     G.transitioning = 1;
     G.transAlpha    = 0.f;
     pending_stage   = STAGE_MAKEUP;
@@ -174,7 +172,7 @@ static void mouse_move(int x, int y)
 /* ── mouse click ─────────────────────────────────────────── */
 static void mouse_click(int button, int state, int x, int y)
 {
-    if (G.transitioning) return; /* ignore clicks during fade */
+   if (G.transitioning && G.stage != STAGE_SHOWCASE) return;
     switch (G.stage) {
         case STAGE_MAKEUP:   makeup_mouse_click(button, state, x, y);   break;
         case STAGE_DRESSUP:  dressup_mouse_click(button, state, x, y);  break;
@@ -199,12 +197,16 @@ static void keyboard(unsigned char key, int x, int y)
 int main(int argc, char **argv)
 {
     /* Initialise game state */
-    memset(&G, 0, sizeof(G));
-    G.stage       = STAGE_MAKEUP;
-    G.lipR = 0.80f; G.lipG = 0.55f; G.lipB = 0.50f;
-    G.eyeR = 0.50f; G.eyeG = 0.50f; G.eyeB = 0.50f;
-    G.dressFade   = 1.f;
-    G.eyeOpen     = 1;
+  memset(&G, 0, sizeof(G));
+
+G.lipR = 0.80f; 
+G.lipG = 0.55f; 
+G.lipB = 0.50f;
+
+G.eyeR = 0.50f;
+G.eyeG = 0.50f;
+G.eyeB = 0.50f;
+G.dressFade = 1.f;
     G.transAlpha  = 0.f;
 
     /* GLUT init */
