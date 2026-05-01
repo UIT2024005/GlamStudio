@@ -8,7 +8,7 @@
 /* ── Window ─────────────────────────────────────────────── */
 #define WIN_W  900
 #define WIN_H  650
-#define WIN_TITLE "✨ Glam Studio – Makeup & Dress-Up Game"
+#define WIN_TITLE "Glam Studio Makeup & Dress-Up Game"
 
 /* ── Stages ─────────────────────────────────────────────── */
 typedef enum {

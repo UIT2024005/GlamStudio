@@ -5,13 +5,6 @@
      gcc main.c makeup.c dressup.c showcase.c ui.c \
          -lGL -lGLU -lglut -lm -o makeup_game
    ========================================================= */
-/* =========================================================
-   main.c  –  Entry point & GLUT callback wiring
-   =========================================================
-   Build:
-     gcc main.c makeup.c dressup.c showcase.c ui.c \
-         -lGL -lGLU -lglut -lm -o makeup_game
-   ========================================================= */
 
 #include <GL/glut.h>
 #include <stdio.h>

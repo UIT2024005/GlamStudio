@@ -692,13 +692,21 @@ static void draw_info_panel(void)
                  0.85f, 0.70f, 1.00f, GLUT_BITMAP_HELVETICA_18);
 
     const char *lip_str =
-        (G.lip==LIP_RED)  ? "Red Lipstick"  :
-        (G.lip==LIP_PINK) ? "Pink Lipstick" :
-        (G.lip==LIP_NUDE) ? "Nude Lipstick" : "No Lipstick";
-    const char *eye_str =
-        (G.eye==EYE_BLUE)   ? "Blue Eye Shadow"   :
-        (G.eye==EYE_PURPLE) ? "Purple Eye Shadow" :
-        (G.eye==EYE_GOLD)   ? "Gold Eye Shadow"   : "No Eye Shadow";
+    (G.lip==LIP_RED)    ? "Red Lipstick"    :
+    (G.lip==LIP_PINK)   ? "Pink Lipstick"   :
+    (G.lip==LIP_NUDE)   ? "Nude Lipstick"   :
+    (G.lip==LIP_BERRY)  ? "Berry Lipstick"  :
+    (G.lip==LIP_CORAL)  ? "Coral Lipstick"  :
+    (G.lip==LIP_WINE)   ? "Wine Lipstick"   :
+                         "No Lipstick";
+const char *eye_str =
+    (G.eye==EYE_BLUE)    ? "Blue Eye Shadow"    :
+    (G.eye==EYE_PURPLE)  ? "Purple Eye Shadow"  :
+    (G.eye==EYE_GOLD)    ? "Gold Eye Shadow"    :
+    (G.eye==EYE_GREEN)   ? "Green Eye Shadow"   :
+    (G.eye==EYE_TEAL)    ? "Teal Eye Shadow"    :
+    (G.eye==EYE_SILVER)  ? "Silver Eye Shadow"  :
+                          "No Eye Shadow";
 
     ui_draw_text(510, WIN_H-128, lip_str,
                  1.0f, 0.90f, 0.95f, GLUT_BITMAP_8_BY_13);
